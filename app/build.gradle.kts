@@ -71,6 +71,8 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:<version>")
     implementation("io.coil-kt:coil-compose:2.0.0")
     implementation("androidx.navigation:navigation-compose:2.6.0")
+    implementation("androidx.compose.material3:material3:1.1.0") // Usa la versión 1.1.0
+    implementation("androidx.compose.material3:material3-window-size-class:1.1.0") // Opcional para tamaños de ventana
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
