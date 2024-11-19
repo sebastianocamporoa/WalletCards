@@ -6,7 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.walletcards.data.model.BusinessCard
+import com.example.walletcards.data.repository.BusinessCard
 
 @Composable
 fun BusinessCardItem(card: BusinessCard) {
@@ -15,12 +15,13 @@ fun BusinessCardItem(card: BusinessCard) {
             .fillMaxWidth()
             .padding(8.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = card.name)
-            Text(text = card.company)
-            Text(text = card.position)
-            Text(text = card.phone)
-            Text(text = card.email)
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(text = "Nombre: ${card.name}")
+            Text(text = "Empresa: ${card.company}")
+            Text(text = "Título: ${card.position}")
+            Text(text = "Teléfono: ${card.phone}")
         }
     }
 }

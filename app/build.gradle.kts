@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("org.jetbrains.kotlin.kapt")
+    alias(libs.plugins.googleService)
 }
 
 android {
@@ -10,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.walletcards"
-        minSdk = 21
+        minSdk = 23
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -73,6 +74,9 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.6.0")
     implementation("androidx.compose.material3:material3:1.1.0") // Usa la versión 1.1.0
     implementation("androidx.compose.material3:material3-window-size-class:1.1.0") // Opcional para tamaños de ventana
+    implementation(libs.firebaseAuth)
+    implementation(libs.firebaseStorage)
+    implementation(libs.firebaseStore)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

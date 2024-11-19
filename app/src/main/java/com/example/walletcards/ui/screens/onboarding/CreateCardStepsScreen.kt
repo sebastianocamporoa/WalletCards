@@ -1,7 +1,5 @@
 package com.example.walletcards.ui.screens.onboarding
 
-import android.app.Activity
-import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,17 +14,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.example.walletcards.data.model.BusinessCard
-import com.example.walletcards.data.repository.BusinessCardRepository
+import com.example.walletcards.data.repository.BusinessCard
+import com.example.walletcards.data.repository.FirestoreRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
-fun CreateCardStepsScreen(repository: BusinessCardRepository = BusinessCardRepository(), onComplete: () -> Unit) {
+fun CreateCardStepsScreen(onComplete: () -> Unit) {
+    val repository = FirestoreRepository() // Usamos el repositorio de Firestore
+
     var step by remember { mutableStateOf(1) }
     var name by rememberSaveable { mutableStateOf("") }
     var company by rememberSaveable { mutableStateOf("") }
     var title by rememberSaveable { mutableStateOf("") }
     var phoneNumber by rememberSaveable { mutableStateOf("") }
-    var photoUri by rememberSaveable { mutableStateOf<Uri?>(null) } // Usar URI para la imagen seleccionada
+    var photoUri by rememberSaveable { mutableStateOf<Uri?>(null) } // Almacenar la URI seleccionada
 
     // Configurar el lanzador para abrir la galería
     val galleryLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -53,7 +56,8 @@ fun CreateCardStepsScreen(repository: BusinessCardRepository = BusinessCardRepos
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Nombre completo") }
+                    label = { Text("Nombre completo") },
+                    modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(onClick = { step++ }) {
@@ -65,13 +69,15 @@ fun CreateCardStepsScreen(repository: BusinessCardRepository = BusinessCardRepos
                 OutlinedTextField(
                     value = company,
                     onValueChange = { company = it },
-                    label = { Text("Empresa") }
+                    label = { Text("Empresa") },
+                    modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
-                    label = { Text("Título") }
+                    label = { Text("Título") },
+                    modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(onClick = { step++ }) {
@@ -95,7 +101,7 @@ fun CreateCardStepsScreen(repository: BusinessCardRepository = BusinessCardRepos
                     Image(
                         painter = rememberAsyncImagePainter(it),
                         contentDescription = "Foto seleccionada",
-                        modifier = Modifier.size(100.dp)
+                        modifier = Modifier.size(150.dp) // Imagen más grande
                     )
                 }
 
@@ -109,21 +115,23 @@ fun CreateCardStepsScreen(repository: BusinessCardRepository = BusinessCardRepos
                 OutlinedTextField(
                     value = phoneNumber,
                     onValueChange = { phoneNumber = it },
-                    label = { Text("Número de teléfono") }
+                    label = { Text("Número de teléfono") },
+                    modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(onClick = {
-                    val newCard = BusinessCard(
-                        id = repository.getCards().size + 1,
-                        name = name,
-                        company = company,
-                        position = title,
-                        phone = phoneNumber,
-                        email = "", // Agrega el email si es necesario
-                        photoUri = photoUri // Guarda la URI de la foto seleccionada
-                    )
-                    repository.addCard(newCard)
-                    onComplete() // Llamamos a onComplete para redirigir a MainScreen
+                    // Guardar la tarjeta en Firestore
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val newCard = BusinessCard(
+                            name = name,
+                            company = company,
+                            position = title,
+                            phone = phoneNumber,
+                            photoUri = photoUri.toString() // Guardamos la URI como String
+                        )
+                        repository.createCard(newCard) // Guardar la tarjeta
+                        onComplete() // Redirigir a la pantalla principal
+                    }
                 }) {
                     Text("Finalizar")
                 }

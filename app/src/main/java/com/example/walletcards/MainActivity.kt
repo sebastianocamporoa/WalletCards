@@ -7,17 +7,18 @@ import androidx.activity.compose.setContent
 import androidx.activity.addCallback
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import com.example.walletcards.data.repository.BusinessCardRepository
 import com.example.walletcards.ui.screens.main.MainScreen
 import com.example.walletcards.ui.screens.onboarding.CreateCardStepsScreen
 import com.example.walletcards.ui.screens.welcome.WelcomeScreen
 import com.example.walletcards.ui.screens.login.LoginScreen
 import com.example.walletcards.ui.screens.register.RegisterScreen
 import com.example.walletcards.ui.theme.WalletCardsTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import com.example.walletcards.data.repository.FirestoreRepository
 
 class MainActivity : ComponentActivity() {
-
-    private val repository = BusinessCardRepository() // Instancia compartida
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,10 +54,10 @@ class MainActivity : ComponentActivity() {
                         sharedPref.edit().putBoolean("is_logged_in", true).apply()
                         checkForCards(currentScreen)
                     })
-                    "create_card" -> CreateCardStepsScreen(repository = repository, onComplete = {
+                    "create_card" -> CreateCardStepsScreen(onComplete = {
                         currentScreen.value = "main"
                     })
-                    "main" -> MainScreen(repository = repository)
+                    "main" -> MainScreen()
                 }
             }
 
@@ -73,10 +74,21 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun checkForCards(currentScreen: androidx.compose.runtime.MutableState<String>) {
-        if (repository.hasCards()) {
-            currentScreen.value = "main"
-        } else {
-            currentScreen.value = "create_card"
+        val repository = FirestoreRepository() // Instancia del repositorio de Firestore
+
+        // Lógica asíncrona para verificar tarjetas
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val cards = repository.getAllCards() // Obtener todas las tarjetas del usuario
+                if (cards.isEmpty()) {
+                    currentScreen.value = "create_card" // Redirigir a la creación de tarjetas
+                } else {
+                    currentScreen.value = "main" // Redirigir a MainScreen si hay tarjetas
+                }
+            } catch (e: Exception) {
+                // Manejo de errores (por ejemplo, conexión fallida)
+                currentScreen.value = "create_card"
+            }
         }
     }
 }

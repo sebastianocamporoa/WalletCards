@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "412605879992",
+    "project_id": "walletcards-8abf8",
+    "storage_bucket": "walletcards-8abf8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:412605879992:android:3b903610abe93d8bb5c64d",
+        "android_client_info": {
+          "package_name": "com.example.walletcards"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYssSIS97IcIaj91Scah70t7zn3AjkLxw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
