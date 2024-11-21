@@ -16,6 +16,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,8 +28,11 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit) {
     var confirmPassword by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var confirmPasswordVisible by remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
     val purpleColor = Color(0xFF631C7F)
+    val coroutineScope = rememberCoroutineScope() // Corutina para operaciones asíncronas
 
     Column(
         modifier = Modifier
@@ -39,7 +45,7 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Correo Electrónico
+        // Campo de correo electrónico
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
@@ -57,7 +63,7 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Contraseña
+        // Campo de contraseña
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
@@ -84,7 +90,7 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Confirmar Contraseña
+        // Campo para confirmar contraseña
         OutlinedTextField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
@@ -111,20 +117,54 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Mostrar errores
+        errorMessage?.let {
+            Text(
+                text = it,
+                color = Color.Red,
+                modifier = Modifier.padding(8.dp)
+            )
+        }
+
         // Botón de registro
         Button(
             onClick = {
                 if (email.isNotEmpty() && password == confirmPassword) {
-                    onRegisterSuccess()
+                    isLoading = true
+                    errorMessage = null
+
+                    // Lógica de registro con Firebase
+                    coroutineScope.launch {
+                        try {
+                            FirebaseAuth.getInstance()
+                                .createUserWithEmailAndPassword(email, password)
+                                .await() // Espera al resultado de Firebase
+                            onRegisterSuccess() // Navega a la siguiente pantalla
+                        } catch (e: Exception) {
+                            errorMessage = "Error: ${e.message}" // Muestra el error
+                        } finally {
+                            isLoading = false
+                        }
+                    }
+                } else {
+                    errorMessage = "Las contraseñas no coinciden o el email está vacío."
                 }
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = purpleColor,
                 contentColor = Color.White
             ),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !isLoading // Deshabilitar mientras carga
         ) {
-            Text(text = "Registrarse")
+            if (isLoading) {
+                CircularProgressIndicator(
+                    color = Color.White,
+                    modifier = Modifier.size(20.dp)
+                )
+            } else {
+                Text(text = "Registrarse")
+            }
         }
     }
 }

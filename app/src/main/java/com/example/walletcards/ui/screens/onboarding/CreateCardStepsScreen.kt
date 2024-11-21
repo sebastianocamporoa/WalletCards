@@ -30,6 +30,8 @@ fun CreateCardStepsScreen(onComplete: () -> Unit) {
     var title by rememberSaveable { mutableStateOf("") }
     var phoneNumber by rememberSaveable { mutableStateOf("") }
     var photoUri by rememberSaveable { mutableStateOf<Uri?>(null) } // Almacenar la URI seleccionada
+    var isLoading by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
     // Configurar el lanzador para abrir la galería
     val galleryLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -119,21 +121,50 @@ fun CreateCardStepsScreen(onComplete: () -> Unit) {
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(16.dp))
+
+                if (errorMessage != null) {
+                    Text(
+                        text = errorMessage!!,
+                        color = androidx.compose.ui.graphics.Color.Red,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                }
+
                 Button(onClick = {
-                    // Guardar la tarjeta en Firestore
-                    CoroutineScope(Dispatchers.IO).launch {
-                        val newCard = BusinessCard(
-                            name = name,
-                            company = company,
-                            position = title,
-                            phone = phoneNumber,
-                            photoUri = photoUri.toString() // Guardamos la URI como String
-                        )
-                        repository.createCard(newCard) // Guardar la tarjeta
-                        onComplete() // Redirigir a la pantalla principal
+                    if (name.isNotBlank() && company.isNotBlank() && phoneNumber.isNotBlank()) {
+                        isLoading = true
+                        errorMessage = null
+
+                        // Guardar la tarjeta en Firestore
+                        CoroutineScope(Dispatchers.IO).launch {
+                            try {
+                                val newCard = BusinessCard(
+                                    name = name,
+                                    company = company,
+                                    position = title,
+                                    phone = phoneNumber,
+                                    photoUri = photoUri?.toString() // Guardamos la URI como String
+                                )
+                                repository.createCard(newCard) // Guardar la tarjeta en Firestore
+                                onComplete() // Redirigir a la pantalla principal
+                            } catch (e: Exception) {
+                                errorMessage = "Error: ${e.message}"
+                            } finally {
+                                isLoading = false
+                            }
+                        }
+                    } else {
+                        errorMessage = "Por favor, complete todos los campos."
                     }
                 }) {
-                    Text("Finalizar")
+                    if (isLoading) {
+                        androidx.compose.material3.CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            color = androidx.compose.ui.graphics.Color.White
+                        )
+                    } else {
+                        Text("Finalizar")
+                    }
                 }
             }
         }

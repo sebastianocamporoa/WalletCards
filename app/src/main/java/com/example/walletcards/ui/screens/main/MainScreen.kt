@@ -25,7 +25,7 @@ fun MainScreen() {
         isLoading = true
         errorMessage = null
         try {
-            cards = repository.getAllCards()
+            cards = repository.getUserCards() // Obtener solo las tarjetas del usuario actual
         } catch (e: Exception) {
             errorMessage = "Error al cargar las tarjetas: ${e.message}"
         } finally {

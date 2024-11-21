@@ -79,7 +79,7 @@ class MainActivity : ComponentActivity() {
         // Lógica asíncrona para verificar tarjetas
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val cards = repository.getAllCards() // Obtener todas las tarjetas del usuario
+                val cards = repository.getUserCards() // Obtener todas las tarjetas del usuario
                 if (cards.isEmpty()) {
                     currentScreen.value = "create_card" // Redirigir a la creación de tarjetas
                 } else {
