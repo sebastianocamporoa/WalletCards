@@ -6,12 +6,17 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.example.walletcards.data.repository.BusinessCard
@@ -20,6 +25,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateCardStepsScreen(onComplete: () -> Unit) {
     val repository = FirestoreRepository() // Usamos el repositorio de Firestore
@@ -38,6 +44,8 @@ fun CreateCardStepsScreen(onComplete: () -> Unit) {
         photoUri = uri // Almacenar la URI seleccionada
     }
 
+    val purpleColor = Color(0xFF631C7F)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -47,9 +55,15 @@ fun CreateCardStepsScreen(onComplete: () -> Unit) {
     ) {
         when (step) {
             1 -> {
-                Text("Bienvenido a WalletCards")
+                Text("¡Estamos encantados de darte la bienvenida! Comencemos creando tu primera tarjeta de presentación digital")
                 Spacer(modifier = Modifier.height(16.dp))
-                Button(onClick = { step++ }) {
+                Button(
+                    onClick = { step++ },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = purpleColor,
+                        contentColor = Color.White
+                    ),
+                ) {
                     Text("Crea mi primer tarjeta")
                 }
             }
@@ -59,10 +73,24 @@ fun CreateCardStepsScreen(onComplete: () -> Unit) {
                     value = name,
                     onValueChange = { name = it },
                     label = { Text("Nombre completo") },
-                    modifier = Modifier.fillMaxWidth()
+                    textStyle = TextStyle(color = purpleColor),
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = purpleColor,
+                        unfocusedBorderColor = purpleColor.copy(alpha = 0.6f),
+                        cursorColor = purpleColor,
+                        focusedLabelColor = purpleColor,
+                        unfocusedLabelColor = purpleColor.copy(alpha = 0.6f)
+                    )
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Button(onClick = { step++ }) {
+                Button(
+                    onClick = { step++ },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = purpleColor,
+                        contentColor = Color.White
+                    ),
+                ) {
                     Text("Siguiente")
                 }
             }
@@ -72,17 +100,39 @@ fun CreateCardStepsScreen(onComplete: () -> Unit) {
                     value = company,
                     onValueChange = { company = it },
                     label = { Text("Empresa") },
-                    modifier = Modifier.fillMaxWidth()
+                    textStyle = TextStyle(color = purpleColor),
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = purpleColor,
+                        unfocusedBorderColor = purpleColor.copy(alpha = 0.6f),
+                        cursorColor = purpleColor,
+                        focusedLabelColor = purpleColor,
+                        unfocusedLabelColor = purpleColor.copy(alpha = 0.6f)
+                    )
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
                     label = { Text("Título") },
-                    modifier = Modifier.fillMaxWidth()
+                    textStyle = TextStyle(color = purpleColor),
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = purpleColor,
+                        unfocusedBorderColor = purpleColor.copy(alpha = 0.6f),
+                        cursorColor = purpleColor,
+                        focusedLabelColor = purpleColor,
+                        unfocusedLabelColor = purpleColor.copy(alpha = 0.6f)
+                    )
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Button(onClick = { step++ }) {
+                Button(
+                    onClick = { step++ },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = purpleColor,
+                        contentColor = Color.White
+                    ),
+                ) {
                     Text("Siguiente")
                 }
             }
@@ -91,9 +141,15 @@ fun CreateCardStepsScreen(onComplete: () -> Unit) {
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // Botón para seleccionar imagen
-                Button(onClick = {
-                    galleryLauncher.launch("image/*") // Abrir la galería para seleccionar una imagen
-                }) {
+                Button(
+                    onClick = {
+                        galleryLauncher.launch("image/*") // Abrir la galería para seleccionar una imagen
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = purpleColor,
+                        contentColor = Color.White
+                    ),
+                ) {
                     Text("Seleccionar imagen")
                 }
 
@@ -108,7 +164,13 @@ fun CreateCardStepsScreen(onComplete: () -> Unit) {
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
-                Button(onClick = { step++ }) {
+                Button(
+                    onClick = { step++ },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = purpleColor,
+                        contentColor = Color.White
+                    ),
+                ) {
                     Text("Siguiente")
                 }
             }
@@ -118,7 +180,15 @@ fun CreateCardStepsScreen(onComplete: () -> Unit) {
                     value = phoneNumber,
                     onValueChange = { phoneNumber = it },
                     label = { Text("Número de teléfono") },
-                    modifier = Modifier.fillMaxWidth()
+                    textStyle = TextStyle(color = purpleColor),
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = purpleColor,
+                        unfocusedBorderColor = purpleColor.copy(alpha = 0.6f),
+                        cursorColor = purpleColor,
+                        focusedLabelColor = purpleColor,
+                        unfocusedLabelColor = purpleColor.copy(alpha = 0.6f)
+                    )
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -130,33 +200,39 @@ fun CreateCardStepsScreen(onComplete: () -> Unit) {
                     )
                 }
 
-                Button(onClick = {
-                    if (name.isNotBlank() && company.isNotBlank() && phoneNumber.isNotBlank()) {
-                        isLoading = true
-                        errorMessage = null
+                Button(
+                    onClick = {
+                        if (name.isNotBlank() && company.isNotBlank() && phoneNumber.isNotBlank()) {
+                            isLoading = true
+                            errorMessage = null
 
-                        // Guardar la tarjeta en Firestore
-                        CoroutineScope(Dispatchers.IO).launch {
-                            try {
-                                val newCard = BusinessCard(
-                                    name = name,
-                                    company = company,
-                                    position = title,
-                                    phone = phoneNumber,
-                                    photoUri = photoUri?.toString() // Guardamos la URI como String
-                                )
-                                repository.createCard(newCard) // Guardar la tarjeta en Firestore
-                                onComplete() // Redirigir a la pantalla principal
-                            } catch (e: Exception) {
-                                errorMessage = "Error: ${e.message}"
-                            } finally {
-                                isLoading = false
+                            // Guardar la tarjeta en Firestore
+                            CoroutineScope(Dispatchers.IO).launch {
+                                try {
+                                    val newCard = BusinessCard(
+                                        name = name,
+                                        company = company,
+                                        position = title,
+                                        phone = phoneNumber,
+                                        photoUri = photoUri?.toString() // Guardamos la URI como String
+                                    )
+                                    repository.createCard(newCard) // Guardar la tarjeta en Firestore
+                                    onComplete() // Redirigir a la pantalla principal
+                                } catch (e: Exception) {
+                                    errorMessage = "Error: ${e.message}"
+                                } finally {
+                                    isLoading = false
+                                }
                             }
+                        } else {
+                            errorMessage = "Por favor, complete todos los campos."
                         }
-                    } else {
-                        errorMessage = "Por favor, complete todos los campos."
-                    }
-                }) {
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = purpleColor,
+                        contentColor = Color.White
+                    ),
+                ) {
                     if (isLoading) {
                         androidx.compose.material3.CircularProgressIndicator(
                             modifier = Modifier.size(20.dp),

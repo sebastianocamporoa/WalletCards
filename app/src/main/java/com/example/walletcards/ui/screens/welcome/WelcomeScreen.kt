@@ -50,7 +50,7 @@ fun WelcomeScreen(onLoginClicked: () -> Unit, onRegisterClicked: () -> Unit) {
                 .padding(horizontal = 0.dp)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.login_image), // Cambia "your_image" por tu imagen
+                painter = painterResource(id = R.drawable.login_image),
                 contentDescription = "Imagen principal",
                 modifier = Modifier
                     .fillMaxHeight() // Usa el espacio completo del 65%
